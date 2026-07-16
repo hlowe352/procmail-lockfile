@@ -37,7 +37,7 @@ const char*hostname P((void))
   return name;
 }
 
-char*ultoan(val,dest)unsigned long val;char*dest;     /* convert to a number */
+char*ultoan(unsigned long val,char*dest)	     /* convert to a number */
 { register int i;			     /* within the set [A-Za-z0-9-_] */
   do
    { i=val&0x3f;			   /* collating sequence dependency! */
@@ -49,7 +49,7 @@ char*ultoan(val,dest)unsigned long val;char*dest;     /* convert to a number */
   return dest;
 }
 
-char*ultstr(minwidth,val,dest)int minwidth;unsigned long val;char*dest;
+char*ultstr(int minwidth,unsigned long val,char*dest)
 { int i;unsigned long j;char*ret;
   j=val;i=0;					   /* a beauty, isn't it :-) */
   do i++;					   /* determine needed width */

@@ -17,7 +17,7 @@ static void fakehandler P((void))
 { gotsig=1;
 }
 
-void qsignal(sig,action)const int sig;void(*action)P((void));
+void qsignal(const int sig,void(*action)P((void)))
 { gotsig=0;
   if(SIG_IGN==signal(sig,(void(*)())fakehandler))
      signal(sig,SIG_IGN);

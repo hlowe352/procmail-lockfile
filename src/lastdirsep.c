@@ -13,9 +13,9 @@ static /*const*/char rcsid[]=
 
 extern const char dirsep[];
 
-char*lastdirsep(filename)const char*filename;	 /* finds the next character */
+char*lastdirsep(const char*filename)		 /* finds the next character */
 { const char*p;					/* following the last DIRSEP */
-  while(p=strpbrk(filename,dirsep))
+  while((p=strpbrk(filename,dirsep)))
      filename=p+1;
   return (char*)filename;
 }

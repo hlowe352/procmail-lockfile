@@ -59,25 +59,24 @@ struct auth_identity
 
 static auth_identity authi;		      /* reuse copy, only one active */
 
-static void castlower(str)register char*str;   /* and I'll take the low road */
+static void castlower(register char*str)   /* and I'll take the low road */
 { for(;*str;str++)
      if((unsigned)*str-'A'<='Z'-'A')		     /* uppercase character? */
 	*str+='a'-'A';				     /* cast it to lowercase */
 }
 
-static const struct passwd*cgetpwnam(user,sock)const char*const user;
- const int sock;
+static const struct passwd*cgetpwnam(const char*const user,const int sock)
 { return getpwnam(user);	       /* this should be selfexplanatory :-) */
 }
 
-static const struct passwd*cgetpwuid(uid,sock)const uid_t uid;const int sock;
+static const struct passwd*cgetpwuid(const uid_t uid,const int sock)
 { return getpwuid(uid);					       /* no comment */
 }
 
-/*const*/auth_identity*auth_finduser(user,sock)char*const user;const int sock;
+/*const*/auth_identity*auth_finduser(char*const user,const int sock)
 { if(!(authi.pw=cgetpwnam(user,sock)))		  /* /etc/passwd user lookup */
    { char*p;
-     if(p=strchr(user,'@'))		  /* does the username contain an @? */
+     if((p=strchr(user,'@')))		  /* does the username contain an @? */
 	*p='\0';		      /* clueless user using the mailaddress */
      castlower(user);	      /* make it all lowercase (luser problem no. 1) */
      if(!(authi.pw=cgetpwnam(user,sock)))	/* ok, be nice and try again */
@@ -89,7 +88,7 @@ static const struct passwd*cgetpwuid(uid,sock)const uid_t uid;const int sock;
   return &authi;					       /* user found */
 }
 
-/*const*/auth_identity*auth_finduid(uid,sock)const uid_t uid;const int sock;
+/*const*/auth_identity*auth_finduid(const uid_t uid,const int sock)
 { if(!(authi.pw=cgetpwuid(uid,sock)))		  /* /etc/passwd user lookup */
      return 0;							     /* nada */
   authi.sock=sock;		    /* save filedescriptor for later perusal */
@@ -99,13 +98,13 @@ static const struct passwd*cgetpwuid(uid,sock)const uid_t uid;const int sock;
 }
 
 #ifndef PROCMAIL
-int auth_checkpassword(pass,pw,allowemptypw)const auth_identity*const pass;
- const char*const pw;const int allowemptypw;
+int auth_checkpassword(const auth_identity*const pass,
+ const char*const pw,const int allowemptypw)
 { const char*rpw;
   rpw=pass->pw->pw_passwd;	     /* get the regular (encrypted) password */
 #ifdef SHADOW_PASSWD
   ;{ struct spwd*spwd;
-     if(spwd=getspnam(pass->pw->pw_name))	     /* any shadow password? */
+     if((spwd=getspnam(pass->pw->pw_name)))	     /* any shadow password? */
 	rpw=spwd->sp_pwdp;			 /* override the regular one */
    }
 #endif
@@ -114,7 +113,7 @@ int auth_checkpassword(pass,pw,allowemptypw)const auth_identity*const pass;
   return !strcmp(rpw,crypt(pw,rpw));		    /* compare the passwords */
 }
 
-const char*auth_getsecret(pass)const auth_identity*const pass;
+const char*auth_getsecret(const auth_identity*const pass)
 { return 0;	       /* no standard way to get a secret, add function here */
 }
 #else /* PROCMAIL */
@@ -123,8 +122,7 @@ auth_identity*auth_newid P((void))
   (pass=malloc(sizeof*pass))->pw=0;pass->mbox=0;return pass;
 }
 
-void auth_copyid(newpass,oldpass)auth_identity*newpass;
- const auth_identity*oldpass;
+void auth_copyid(auth_identity*newpass,const auth_identity*oldpass)
 { struct passwd*np;const struct passwd*op;
   if(newpass->mbox)
      free(newpass->mbox),newpass->mbox=0;
@@ -143,9 +141,9 @@ void auth_copyid(newpass,oldpass)auth_identity*newpass;
 #endif
 }
 
-static void auth_zeroout(pass)auth_identity*pass;
+static void auth_zeroout(auth_identity*pass)
 { struct passwd*p;
-  if(p=(struct passwd*)pass->pw)
+  if((p=(struct passwd*)pass->pw))
    { bbzero(p->pw_name,strlen(p->pw_name));
 #ifndef NOpw_passwd
      if(p->pw_passwd)bbzero(p->pw_passwd,strlen(p->pw_passwd));
@@ -164,22 +162,22 @@ static void auth_zeroout(pass)auth_identity*pass;
      bbzero(pass->mbox,strlen(pass->mbox));
 }
 
-void auth_freeid(pass)auth_identity*pass;
+void auth_freeid(auth_identity*pass)
 { struct passwd*p;
   auth_zeroout(pass);
-  if(p=(struct passwd*)pass->pw)
+  if((p=(struct passwd*)pass->pw))
      free(p->pw_name),free(p->pw_dir),free(p->pw_shell),free(p);
   if(pass->mbox)
      free(pass->mbox);
   free(pass);
 }
 
-int auth_filledid(pass)const auth_identity*pass;
+int auth_filledid(const auth_identity*pass)
 { return !!pass->pw;
 }
 #endif /* PROCMAIL */
 
-const char*auth_mailboxname(pass)auth_identity*const pass;
+const char*auth_mailboxname(auth_identity*const pass)
 { if(!pass->mbox)
 #ifdef MAILSPOOLHOME
    { static const char mailfile[]=MAILSPOOLHOME;size_t i;
@@ -209,23 +207,23 @@ const char*auth_mailboxname(pass)auth_identity*const pass;
   return pass->mbox;
 }
 
-uid_t auth_whatuid(pass)const auth_identity*const pass;
+uid_t auth_whatuid(const auth_identity*const pass)
 { return pass->pw->pw_uid;
 }
 
-uid_t auth_whatgid(pass)const auth_identity*const pass;
+uid_t auth_whatgid(const auth_identity*const pass)
 { return pass->pw->pw_gid;
 }
 
-const char*auth_homedir(pass)const auth_identity*const pass;
+const char*auth_homedir(const auth_identity*const pass)
 { return pass->pw->pw_dir;
 }
 
-const char*auth_shell(pass)const auth_identity*const pass;
+const char*auth_shell(const auth_identity*const pass)
 { return pass->pw->pw_shell;
 }
 
-const char*auth_username(pass)const auth_identity*const pass;
+const char*auth_username(const auth_identity*const pass)
 { return pass->pw->pw_name;
 }
 

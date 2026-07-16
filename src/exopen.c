@@ -51,8 +51,8 @@ static const char*safehost P((void)) /* return a hostname safe for filenames */
   return sname;
 }
 
-int unique(full,p,len,mode,verbos,flags)char*const full;char*p;
- const size_t len;const mode_t mode;const int verbos,flags;
+int unique(char*const full,char*p,
+ const size_t len,const mode_t mode,const int verbos,const int flags)
 { static const char s2c[]=".,+%";static int serial=STRLEN(s2c);
   static time_t t;char*dot,*end,*host;struct stat filebuf;
   int nicediff,i,didnice,retry=RETRYunique;
@@ -144,7 +144,7 @@ ret0:	return flags&doFD?-1:0;
   return 1;
 }
 				     /* rename MUST fail if already existent */
-int myrename(old,newn)const char*const old,*const newn;
+int myrename(const char*const old,const char*const newn)
 { int fd,serrno;
   fd=hlink(old,newn);serrno=errno;unlink(old);
   if(fd>0)rclose(fd-1);
@@ -153,7 +153,7 @@ int myrename(old,newn)const char*const old,*const newn;
 }
 
 						     /* NFS-resistant link() */
-int rlink(old,newn,st)const char*const old,*const newn;struct stat*st;
+int rlink(const char*const old,const char*const newn,struct stat*st)
 { if(link(old,newn))
    { register int serrno,ret;struct stat sto,stn;
      serrno=errno;ret= -1;
@@ -174,7 +174,7 @@ int rlink(old,newn,st)const char*const old,*const newn;struct stat*st;
   return 0;
 }
 		 /* hardlink with fallback for systems that don't support it */
-int hlink(old,newn)const char*const old,*const newn;
+int hlink(const char*const old,const char*const newn)
 { int ret;struct stat stbuf;
   if(0<(ret=rlink(old,newn,&stbuf)))		      /* try a real hardlink */
    { int fd;

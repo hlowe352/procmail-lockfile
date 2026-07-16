@@ -38,7 +38,7 @@ static void failure P((void))				      /* signal trap */
 { exitflag=2;					       /* merely sets a flag */
 }
 				    /* see locking.c for comment on xcreat() */
-static int xcreat(name,tim)const char*const name;time_t*const tim;
+static int xcreat(const char*const name,time_t*const tim)
 { char*p;int j= -1;size_t i;struct stat stbuf;
   i=lastdirsep(name)-name;
   if(!(p=malloc(i+UNIQnamelen)))
@@ -50,17 +50,17 @@ static int xcreat(name,tim)const char*const name;time_t*const tim;
   return j;
 }
 
-void elog(a)const char*const a;
+void elog(const char*const a)
 { write(STDERR,a,strlen(a));
 }
 
-void nlog(a)const char*const a;
+void nlog(const char*const a)
 { elog(nameprefix);elog(a);  /* decent error messages should start with this */
 }
 
 static PROGID;
 
-int main(argc,argv)int argc;const char*const argv[];
+int main(int argc,const char*const argv[])
 { const char*const*p;char*cp;uid_t uid;
   int sleepsec,retries,invert,force,suspend,retval=EXIT_SUCCESS,virgin=1;
   static const char usage[]="Usage: lockfile -v | -nnn | -r nnn | -l nnn \
@@ -247,38 +247,37 @@ usg:
   return retval;			       /* all other exitcodes remain */
 }
 
-void*tmalloc(len)const size_t len;				     /* stub */
+void*tmalloc(const size_t len)				     /* stub */
 { void*p;
   if(!(p=malloc(len)))
      exitflag=1;				     /* signal out of memory */
   return p;
 }
 
-void tfree(p)void*const p;					     /* stub */
+void tfree(void*const p)					     /* stub */
 { free(p);
 }
 
-int ropen(name,mode,mask)const char*const name;const int mode;
- const mode_t mask;
+int ropen(const char*const name,const int mode,const mode_t mask)
 { return open(name,mode,mask);					     /* stub */
 }
 
-int rwrite(fd,a,len)const int fd;const void*const a;const int len;   /* stub */
+int rwrite(const int fd,const void*const a,const int len)   /* stub */
 { return write(fd,a,len);
 }
 
-int rclose(fd)const int fd;					     /* stub */
+int rclose(const int fd)					     /* stub */
 { return close(fd);
 }
 
-void writeerr(a)const char*const a;				     /* stub */
+void writeerr(const char*const a)				     /* stub */
 {
 }
 
-char*cstr(a,b)char*const a;const char*const b;			     /* stub */
+char*cstr(char*const a,const char*const b)			     /* stub */
 { return 0;
 }
 
-void ssleep(seconds)const unsigned seconds;			     /* stub */
+void ssleep(const unsigned seconds)			     /* stub */
 { sleep(seconds);
 }

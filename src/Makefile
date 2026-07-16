@@ -32,7 +32,7 @@ GCC_WARNINGS = -O2 -pedantic -Wreturn-type -Wunused -Wformat -Wtraditional \
  #-Wimplicit -Wshadow -Wid-clash-6 #-Wuninitialized
 
 # The place to put your favourite extra cc flag
-CFLAGS0 = -O -Wno-implicit-function-declaration -Wno-comment #$(GCC_WARNINGS)
+CFLAGS0 = -O -Wno-implicit-function-declaration -Wno-comment -Wno-deprecated-non-prototype #$(GCC_WARNINGS)
 LDFLAGS0= -s
 # Read my libs :-)
 LIBS=
