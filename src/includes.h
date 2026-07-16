@@ -330,12 +330,7 @@ extern int errno;
 #endif
 
 #ifndef NOuname
-#ifndef P		  /* SINIX V5.23 has the wrong prototype for uname() */
-extern int uname();					 /* so we fix it :-) */
-#define Uname(name)		((int(*)(struct utsname*))uname)(name)
-#else
-#define Uname(name)		uname(name)		    /* no fix needed */
-#endif /* P */
+#define Uname(name)		uname(name)
 #endif /* NOuname */
 				 /* NEWS OS 5.X has the wrong prototype here */
 #define Fdopen(fd,type)		((FILE*)fdopen(fd,type))
