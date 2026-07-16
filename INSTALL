@@ -1,7 +1,8 @@
 Discusses:
 		1. Getting it to compile
-		2. IMPORTANT info for people with remote filesystems (like NFS)
-		3. Extra options if you are a system administrator
+		2. Using an alternate compiler (e.g. Zig's "zig cc")
+		3. IMPORTANT info for people with remote filesystems (like NFS)
+		4. Extra options if you are a system administrator
 
 				---
 
@@ -48,7 +49,32 @@ The sources are supposed to be fully ANSI, K&R and POSIX compliant.
 
 				---
 
-2. IMPORTANT info for people with remote filesystems (like NFS)
+2. Using an alternate compiler (e.g. Zig's "zig cc")
+   --------------------------------------------------
+
+No source or Makefile changes are required to build with the C compiler
+that ships with the Zig toolchain instead of your system's cc/gcc/clang.
+Override CC on the command line:
+
+	make clean
+	make CC="zig cc" bins
+	make CC="zig cc" install
+
+This works because CC is just a Makefile variable (nothing hardcodes
+"cc"). "zig cc" is itself clang under the hood, so it accepts the same
+CFLAGS this package already uses (including -std=gnu89). Quote the
+value as shown ("zig cc" is two words); pass CC= the same way to
+"install" or any other target you invoke.
+
+This tree builds and installs cleanly (warning-free) with both plain
+"cc" and "zig cc" as of a fix to src/autoconf's const/prototype-
+detection probe (see git log): older clang releases could make it
+silently mis-detect const/prototype support and fall back to K&R-style
+prototypes throughout the headers; that false-positive is fixed here.
+
+				---
+
+3. IMPORTANT info for people with remote filesystems (like NFS)
    ------------------------------------------------------------
 
 The autoconf script tries to determine what kernel locking functions are
@@ -77,7 +103,7 @@ from using them.
 
 				---
 
-3. Extra options if you are a system administrator
+4. Extra options if you are a system administrator
    -----------------------------------------------
 
 *******************************************************************************

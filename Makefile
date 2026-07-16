@@ -131,7 +131,7 @@ NMANS= ../new/lockfile.1
 
 #$Id$
 
-all: bins mans recommend
+all: bins mans
 	@echo If you would like to inspect the results before running make \
 install:
 	@echo All installable files can be found in the new/ subdirectory.
@@ -241,13 +241,13 @@ install.bin: $(BINS) $(BASENAME)
 	@-dirname / >$(DEVNULL) || $(INSTALL) examples/dirname $(BINDIR)
 	echo Housekeeping file >install.bin
 
+.PHONY: install
 install:
 	@$(MAKE) install.man install.bin
 	@echo
 	@cd $(BINDIR); echo Installed in $(BINDIR); ls -l $(BINSS)
 	@cd $(MAN1DIR); echo Installed in $(MAN1DIR); ls -l $(MANS1)
 	@cd $(MAN5DIR); echo Installed in $(MAN5DIR); ls -l $(MANS5)
-	@$(MAKE) recommend
 
 deinstall:
 	@echo ============================= Deinstalling the procmail package.

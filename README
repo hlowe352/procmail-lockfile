@@ -33,6 +33,13 @@ Any *NIX-alike (or POSIX compliant) system with a C compiler.
 For a fairly complete list of all C-library references done in the programs
 see "src/includes.h".
 
+Builds clean (warning-free) with either the system "cc"/clang/gcc or with
+the Zig toolchain's C compiler ("zig cc") as a drop-in CC replacement:
+
+  make CC="zig cc"
+
+See INSTALL for details.
+
 ------------------------------ DESCRIPTION -----------------------------------
 
 lockfile creates one or more semaphore files, retrying and waiting until it
